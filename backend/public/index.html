@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Search & Upload Demo</title>
+    <title>Image Search Demo</title>
 </head>
 <body style="font-family: Arial; padding: 30px;">
 
@@ -9,71 +9,23 @@
 
     <input id="inputBox" placeholder="Type something like 'tom'" 
            style="width: 300px; padding: 8px;">
-
+           
     <button onclick="searchImage()" style="padding: 8px;">Show Image</button>
 
     <br><br>
 
     <img id="imgBox" width="300" style="border: 1px solid #ccc;">
 
-
-    <hr style="margin: 40px 0;">
-
-    <h2>Upload a New Image</h2>
-
-    <!-- Character Name -->
-    <input id="nameBox" placeholder="tom, jerry, dog" 
-           style="width: 200px; padding: 8px;">
-
-    <!-- File chooser -->
-    <input type="file" id="fileInput" style="padding: 8px;">
-
-    <button onclick="uploadImage()" style="padding: 8px;">Upload</button>
-
-    <p id="msg" style="color: green; font-weight: bold;"></p>
-
     <script>
-        // SEARCH FUNCTION
         function searchImage() {
             let text = document.getElementById("inputBox").value;
 
+            //text = jerry
+            //localhost:3000/api/getImage?name=jerry
             fetch(`/api/getImage?name=${encodeURIComponent(text)}`)
             .then(res => res.json())
             .then(data => {
                 document.getElementById("imgBox").src = data.url;
-            });
-        }
-
-
-        // UPLOAD FUNCTION
-        function uploadImage() {
-            let name = document.getElementById("nameBox").value.toLowerCase();
-            let file = document.getElementById("fileInput").files[0];
-
-            if (!name) {
-                alert("Please enter a name: tom, jerry, or dog");
-                return;
-            }
-            if (!file) {
-                alert("Please select a file first!");
-                return;
-            }
-
-            let formData = new FormData();
-            formData.append("image", file); // IMPORTANT: field name MUST be "image"
-
-            fetch(`/api/upload?name=${encodeURIComponent(name)}`, {
-                method: "POST",
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("msg").textContent = data.message;
-
-                // refresh image preview if same name
-                if (name === document.getElementById("inputBox").value.toLowerCase()) {
-                    document.getElementById("imgBox").src = "/" + name + ".jpg?ts=" + Date.now();
-                }
             });
         }
     </script>
